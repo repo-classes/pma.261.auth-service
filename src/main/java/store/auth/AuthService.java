@@ -29,9 +29,9 @@ public class AuthService {
         // search account
         final AccountOut account = accountController.findByEmailAndPassword(
             AccountIn.builder()
-            .email(email)
-            .password(password)
-            .build()
+                .email(email)
+                .password(password)
+                .build()
         ).getBody();
 
         // create token
