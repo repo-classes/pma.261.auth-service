@@ -14,8 +14,8 @@ public class AuthService {
     @Value("${store.jwt.duration}")
     private Long duration;
 
-    @Value("${store.jwt.https}")
-    private Boolean https;
+    @Value("${store.jwt.httpOnly}")
+    private Boolean httpOnly;
 
     @Autowired
     private AccountController accountController;
@@ -53,8 +53,8 @@ public class AuthService {
         return duration;
     }
 
-    public Boolean getHTTPS() {
-        return https;
+    public Boolean getHttpOnly() {
+        return httpOnly;
     }
 
     

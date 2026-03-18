@@ -48,7 +48,7 @@ public class AuthResource implements AuthController {
 
     private ResponseCookie buildTokenCookie(String content, Long duration) {
         return ResponseCookie.from(AuthController.AUTH_COOKIE_TOKEN, content)
-            .httpOnly(authService.getHTTPS())
+            .httpOnly(authService.getHttpOnly())
             .sameSite("None")
             .secure(true)
             .path("/")

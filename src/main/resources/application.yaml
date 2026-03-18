@@ -9,4 +9,4 @@ store:
   jwt:
     secretKey: ${JWT_SECRET_KEY}
     duration: 86400000 # 24 hours in milliseconds
-    https: false
+    httpOnly: ${JWT_HTTP_ONLY}
