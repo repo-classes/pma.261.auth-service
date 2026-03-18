@@ -1,6 +1,7 @@
 package store.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import store.account.AccountController;
@@ -10,8 +11,17 @@ import store.account.AccountOut;
 @Service
 public class AuthService {
 
+    @Value("${store.jwt.duration}")
+    private Long duration;
+
+    @Value("${store.jwt.https}")
+    private Boolean https;
+
     @Autowired
     private AccountController accountController;
+
+    @Autowired
+    private JwtService jwtService;
 
     public void register(RegisterIn in) {
 
@@ -34,8 +44,17 @@ public class AuthService {
                 .build()
         ).getBody();
 
-        // create token
-        return null;
+        return TokenOut.builder()
+            .token(jwtService.generate(account, duration))
+            .build();
+    }
+
+    public Long getDuration() {
+        return duration;
+    }
+
+    public Boolean getHTTPS() {
+        return https;
     }
 
     

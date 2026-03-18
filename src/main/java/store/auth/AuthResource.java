@@ -1,6 +1,10 @@
 package store.auth;
 
+import java.time.Duration;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,9 +17,16 @@ public class AuthResource implements AuthController {
     private AuthService authService;
 
     @Override
-    public ResponseEntity<TokenOut> login(LoginIn in) {
-        authService.login(in.email(), in.password());
-        throw new UnsupportedOperationException("Unimplemented method 'login'");
+    public ResponseEntity<Void> login(LoginIn in) {
+        final TokenOut out = authService.login(in.email(), in.password());
+        return ResponseEntity
+            .ok()
+            .header(
+                HttpHeaders.SET_COOKIE,
+                buildTokenCookie(out.token(), authService.getDuration()).toString()
+            )
+            .build()
+        ;
     }
 
     @Override
@@ -34,5 +45,15 @@ public class AuthResource implements AuthController {
     public ResponseEntity<Void> healthCheck() {
         return ResponseEntity.ok().build();
     }
-    
+
+    private ResponseCookie buildTokenCookie(String content, Long duration) {
+        return ResponseCookie.from(AuthController.AUTH_COOKIE_TOKEN, content)
+            .httpOnly(authService.getHTTPS())
+            .sameSite("None")
+            .secure(true)
+            .path("/")
+            .maxAge(Duration.ofMillis(duration))
+            .build();
+    }
+
 }
