@@ -1,7 +1,10 @@
 package store.auth;
 
 import java.time.Duration;
+import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -12,6 +15,8 @@ import store.account.AccountOut;
 
 @RestController
 public class AuthResource implements AuthController {
+
+    private static Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
     private AuthService authService;
@@ -54,6 +59,15 @@ public class AuthResource implements AuthController {
             .path("/")
             .maxAge(Duration.ofMillis(duration))
             .build();
+    }
+
+    @Override
+    public ResponseEntity<Map<String, String>> solveToken(TokenOut map) {
+        logger.debug("Chegou: " + map.toString());
+        final String idAccount = authService.solveToken(map.token());
+        return ResponseEntity.ok(Map.of(
+            "idAccount", idAccount
+        ));
     }
 
 }

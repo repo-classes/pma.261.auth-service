@@ -10,3 +10,9 @@ store:
     secretKey: ${JWT_SECRET_KEY}
     duration: 86400000 # 24 hours in milliseconds
     httpOnly: ${JWT_HTTP_ONLY}
+
+logging:
+  level:
+    root: info
+    store: debug
+    org.springframework.web: debug

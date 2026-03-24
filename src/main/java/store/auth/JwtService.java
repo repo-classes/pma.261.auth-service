@@ -7,8 +7,12 @@ import java.util.Map;
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import store.account.AccountOut;
@@ -43,4 +47,25 @@ public class JwtService {
         return Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKey));
     }
     
+    public String getId(String jwt) {
+        // constroe o parser
+        JwtParser parser = Jwts.parser().verifyWith(getKey()).build();
+        // recupero os atributos
+        Claims claims = parser.parseSignedClaims(jwt).getPayload();
+        Date now = new Date();
+        if (claims.getNotBefore().after(now)) {
+            throw new ResponseStatusException(
+                HttpStatus.UNAUTHORIZED,
+                "Token is not valid yet!"
+            );
+        }
+        if (claims.getExpiration().before(now)) {
+            throw new ResponseStatusException(
+                HttpStatus.UNAUTHORIZED,
+                "Token is expired!"
+            );
+        }
+        return claims.getId();
+    }
+
 }
